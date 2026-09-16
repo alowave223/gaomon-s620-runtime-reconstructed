@@ -1,0 +1,48 @@
+{
+  "base": "0x0800cc00",
+  "length": 1368,
+  "architecture": {
+    "isa": "Thumb-2",
+    "minimumProfile": "ARMv7-M or a later compatible Thumb-2 profile with UDIV",
+    "endianness": "little",
+    "abi": "AAPCS-like; r0-r3 volatile argument registers and r4-r7 preserved by non-leaf runtime functions",
+    "confidence": "proven from instruction encodings and prologue/epilogue behaviour"
+  },
+  "functions": [
+    {"address":"0x0800cc04","size":42,"name":"runtime_hook_get_feature","callers":["hook:0x0800b644"],"callees":["stock_usb_send_feature"],"confidence":"proven"},
+    {"address":"0x0800cc32","size":46,"name":"runtime_hook_set_feature","callers":["hook:0x0800b6a4"],"callees":["stock_usb_receive_feature"],"confidence":"proven"},
+    {"address":"0x0800cc64","size":42,"name":"runtime_hook_dispatch_feature","callers":["hook:0x0800b7b4"],"callees":["runtime_feature_command_handler"],"confidence":"proven"},
+    {"address":"0x0800cc92","size":20,"name":"runtime_hook_ema_weight","callers":["hook:0x08007782","hook:0x08007792","hook:0x080077a4","hook:0x080077b4"],"callees":["stock_ema_interpolate_u32"],"confidence":"proven"},
+    {"address":"0x0800ccaa","size":20,"name":"runtime_hook_average_window","callers":["hook:0x0800762a","hook:0x0800763a"],"callees":["stock_moving_average_u32"],"confidence":"proven"},
+    {"address":"0x0800ccc2","size":96,"name":"runtime_hook_settle_delay","callers":["hook:0x08004d3e","hook:0x08004d4c","hook:0x08004d5a","hook:0x08004d9c"],"callees":["stock_wait_us"],"confidence":"proven"},
+    {"address":"0x0800cd26","size":22,"name":"runtime_hook_barrel_rescan","callers":["hook:0x08007e58","hook:0x08007ed8"],"callees":["stock_barrel_slot_rescan"],"confidence":"proven"},
+    {"address":"0x0800cd3c","size":582,"name":"runtime_feature_command_handler","callers":["runtime_hook_dispatch_feature"],"callees":["runtime_config_initialize","runtime_crc32","runtime_config_save"],"confidence":"proven"},
+    {"address":"0x0800cf82","size":194,"name":"runtime_config_initialize","callers":["runtime_feature_command_handler"],"callees":["runtime_crc32"],"confidence":"proven"},
+    {"address":"0x0800d044","size":58,"name":"runtime_crc32","callers":["runtime_feature_command_handler","runtime_config_initialize","runtime_config_save"],"callees":[],"confidence":"proven"},
+    {"address":"0x0800d07e","size":102,"name":"runtime_config_save","callers":["runtime_feature_command_handler"],"callees":["runtime_crc32","runtime_flash_program_page","runtime_flash_lock"],"confidence":"proven"},
+    {"address":"0x0800d0e4","size":94,"name":"runtime_flash_program_page","callers":["runtime_config_save"],"callees":[],"confidence":"proven"},
+    {"address":"0x0800d142","size":22,"name":"runtime_flash_lock","callers":["runtime_config_save"],"callees":[],"confidence":"proven"}
+  ],
+  "stockSymbols": [
+    {"address":"0x08004a90","name":"stock_ema_interpolate_u32","confidence":"strongly-supported"},
+    {"address":"0x08006b2e","name":"stock_wait_us","confidence":"strongly-supported"},
+    {"address":"0x08006cb4","name":"stock_barrel_slot_rescan","confidence":"strongly-supported"},
+    {"address":"0x0800a04c","name":"stock_moving_average_u32","confidence":"strongly-supported"},
+    {"address":"0x0800aea4","name":"stock_usb_receive_feature","confidence":"strongly-supported"},
+    {"address":"0x0800af00","name":"stock_usb_send_feature","confidence":"strongly-supported"},
+    {"address":"0x0800b64c","name":"stock_feature_get_continue","confidence":"proven-control-flow"},
+    {"address":"0x0800b6d0","name":"stock_usb_control_complete","confidence":"proven-control-flow"},
+    {"address":"0x0800b7bc","name":"stock_feature_dispatch_normal","confidence":"proven-control-flow"},
+    {"address":"0x0800b7c4","name":"stock_feature_dispatch_continue","confidence":"proven-control-flow"},
+    {"address":"0x08018446","name":"stock_feature_dispatch_noncustom","confidence":"proven-control-flow"}
+  ],
+  "unreachableMarkers": [
+    {"address":"0x0800cc00","bytes":"4af2011c","value":"0xa101"},
+    {"address":"0x0800cc2e","bytes":"4af2021c","value":"0xa102"},
+    {"address":"0x0800cc60","bytes":"4af2031c","value":"0xa103"},
+    {"address":"0x0800cc8e","bytes":"4af2041c","value":"0xa104"},
+    {"address":"0x0800cca6","bytes":"4af2051c","value":"0xa105"},
+    {"address":"0x0800ccbe","bytes":"4af2061c","value":"0xa106"},
+    {"address":"0x0800cd22","bytes":"4af2071c","value":"0xa107"}
+  ]
+}
