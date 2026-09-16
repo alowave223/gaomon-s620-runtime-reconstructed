@@ -165,11 +165,11 @@ byte, and final bitwise complement.
 | Get config | `2` | Returns the exact 24-byte config record generated from runtime RAM. |
 | Set config | `3` | Requires 24 bytes plus matching magic/version/CRC; clamps target to 294–530, zero EMA to 64, window to 1–4, normalizes barrel flag, then marks unsaved. Reserved input bytes are not inspected or retained. |
 | Save config | `4` | Writes RAM configuration to `0x0800F800` and clears unsaved without a hardware-error result. |
-| Get telemetry | `5` | Returns target Hz, target×10, RAM word `+0x2C`, zero counters, static bytes `[227,20,30,150]`, mode 0, unsaved byte, and zero loop time. |
-| Factory defaults | `6` | Restores 294 Hz, EMA 64, window 4, barrel false, marks unsaved. |
+| Factory defaults | `5` | Restores 294 Hz, EMA 64, window 4, barrel false, marks unsaved. |
+| Get telemetry | `6` | Returns target Hz, target×10, RAM word `+0x2C`, zero counters, static bytes `[227,20,30,150]`, mode 0, unsaved byte, and zero loop time. |
 
-The earlier TypeScript enum had command 5/6 reversed; it is corrected to the
-machine-observed order. The blob advertises capability bit 3 but does **not**
+The command mapping above was verified by executing all six commands against
+the blob; earlier notes had commands 5 and 6 reversed. The blob advertises capability bit 3 but does **not**
 measure loop time: its returned loop-time field is always zero. It also does
 not implement adaptive scanning, report/full-scan/tracking-loss counters, or a
 live four-element settle telemetry vector. Those host-side interpretations are
@@ -270,22 +270,24 @@ status, retry, or readback verification in this blob.
 Create an isolated analysis environment once:
 
 ```sh
-python3 -m venv .tools/s620-re
+python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt
 ```
 
 Then run:
 
 ```sh
-npm run s620:runtime:extract
-npm run s620:runtime:build
-npm run s620:runtime:disassemble
-npm run s620:runtime:test
-npm run s620:runtime:verify
+python tools/build_runtime.py
+python tools/disassemble.py
+python tools/test_runtime.py
+
+# Requires Zig; tested with 0.16.0.
+python tools/build_editable.py
+python tools/test_editable.py
 ```
 
-`s620:runtime:test` builds the source, checks the CFG/hook map, runs original
-and reconstructed settle-hook vectors under Unicorn with only the stock delay
-routine replaced by `BX LR`, and compiles the packed C-layout assertions.
-`s620:runtime:verify` extracts the JSON reference, checks base/length/SHA-256,
-and fails at the first byte difference with surrounding bytes.
+`test_runtime.py` verifies the exact assembly, CFG/hook map, and isolated
+settle-hook execution. `test_editable.py` builds the size-optimized C version
+and compares its command responses and settle calculations with the original
+blob under Unicorn. The linker rejects an editable image larger than the
+original 1,368-byte slot.
